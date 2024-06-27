@@ -1,6 +1,6 @@
 import express from 'express'
-import productController from '../controller/productController'
-import upload from '../validation/productUpload'
+import productController from '../controller/productController.js'
+import upload from '../validation/productUpload.js'
 
 
 

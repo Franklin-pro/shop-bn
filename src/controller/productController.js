@@ -1,8 +1,8 @@
 import express from 'express'
-import success from '../utilies/success'
-import errormessage from '../utilies/errormessage'
-import Product from '../model/product'
-import cloudinary from '../utilies/cloud'
+import success from '../utilies/success.js'
+import errormessage from '../utilies/errormessage.js'
+import Product from '../model/product.js'
+import cloudinary from '../utilies/cloud.js'
 class productController {
     static async postProduct(req, res) {
         try {

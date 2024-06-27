@@ -1,12 +1,12 @@
 import express from 'express'
-import USER from '../model/user'
+import USER from '../model/user.js'
 import bcrypt from 'bcrypt'
-import success from '../utilies/success'
+import success from '../utilies/success.js'
 import Jwt from 'jsonwebtoken'
 import crypto from 'crypto'
-import errormessage from '../utilies/errormessage'
-import User from '../model/user'
-import sendLoginEmail from '../utilies/email'
+import errormessage from '../utilies/errormessage.js'
+import User from '../model/user.js'
+import sendLoginEmail from '../utilies/email.js'
 
 
 class userController {
