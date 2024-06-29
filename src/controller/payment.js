@@ -5,7 +5,7 @@ import mobileMail from '../utilies/mobileEmail.js';
 
 dotenv.config();
 
-const mobileMoneyApiBaseUrl = 'https://momoapi.mtn.co.rw'; // Ensure this is correct
+const mobileMoneyApiBaseUrl = 'https://sandbox.momodeveloper.mtn.com/collection/v1_0/requesttopay'; // Correct sandbox URL
 
 class PaymentController {
   static async makePayment(req, res) {
@@ -18,24 +18,31 @@ class PaymentController {
     }
 
     try {
-      const mobileMoneyApiResponse = await axios.post(`${mobileMoneyApiBaseUrl}`, {
+      const requestData = {
         amount,
         currency: 'RWF',
+        externalId: `momo_${Date.now()}`, // Unique ID for the transaction
         payer: {
           partyIdType: 'MSISDN',
           partyId: phoneNumber.toString(),
         },
-        payee: {
-          partyIdType: 'MSISDN',
-          partyId: '0790019543', // Replace with the recipient's phone number where money should be received
-        },
         payeeNote: description,
-      }, {
+        payerMessage: description,
+      };
+
+      console.log('Request Data:', requestData);
+
+      const mobileMoneyApiResponse = await axios.post(mobileMoneyApiBaseUrl, requestData, {
         headers: {
           'Authorization': `Bearer ${process.env.MTN_API_KEY}`, 
+          'Ocp-Apim-Subscription-Key': process.env.MTN_SUBSCRIPTION_KEY, // Add subscription key
+          'X-Reference-Id': requestData.externalId,
+          'X-Target-Environment': 'sandbox',
           'Content-Type': 'application/json',
         },
       });
+
+      console.log('API Response:', mobileMoneyApiResponse.data);
 
       const payment = new Payment({
         amount,
@@ -48,11 +55,11 @@ class PaymentController {
 
       await payment.save();
 
-      await mobileMail({ email });
+      await mobileMail({ email, subject: 'Payment Confirmation', message: 'Your payment was successful!' });
 
       res.status(200).json({ message: 'Payment successful', paymentId: mobileMoneyApiResponse.data.paymentId });
     } catch (error) {
-      console.error('Error processing payment:', error);
+      console.error('Error processing payment:', error.response ? error.response.data : error.message);
       res.status(500).json({ error: error.message });
     }
   }
