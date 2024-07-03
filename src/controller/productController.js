@@ -92,5 +92,16 @@ static async deleteOneProduct(req,res){
         
     }
 }
+static async updateProduct(req,res){
+    try {
+        const prodId = req.params.id
+        const product = await Product.findByIdAndUpdate(prodId, req.body, {new : true})
+        if(product){
+            return success(res,200,`product successfully updated`,product)
+        }
+    } catch (error) {
+        
+    }
+}
 }
 export default productController
