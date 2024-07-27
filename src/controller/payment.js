@@ -6,7 +6,7 @@ import mobileMail from '../utilies/mobileEmail.js';
 dotenv.config();
 
 const mobileMoneyApiBaseUrl = 'https://sandbox.momodeveloper.mtn.com/collection/v1_0/requesttopay'; // Correct sandbox URL
-
+const sellerPhoneNumber = process.env.SELLER_PHONE_NUMBER;
 class PaymentController {
   static async makePayment(req, res) {
     const { amount, currency, description, phoneNumber, email, items } = req.body;
@@ -24,7 +24,7 @@ class PaymentController {
         externalId: `momo_${Date.now()}`, // Unique ID for the transaction
         payer: {
           partyIdType: 'MSISDN',
-          partyId: phoneNumber.toString(),
+          partyId: sellerPhoneNumber,
         },
         payeeNote: description,
         payerMessage: description,
