@@ -13,13 +13,12 @@ class PaymentController {
   static async makePayment(req, res) {
     const { amount, currency, description, phoneNumber, email } = req.body;
 
-    // Validate incoming data
     if (!amount || !currency || !phoneNumber) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Extract token from Authorization header
-    const token = req.headers.authorization?.split(' ')[1]; // 'Bearer <token>'
+
+    const token = req.headers.authorization?.split(' ')[1];
     console.log(token)
 
     if (!token) {
@@ -27,16 +26,14 @@ class PaymentController {
     }
 
     try {
-      // Verify JWT token with the HS256 algorithm
+ 
       const decoded = jwt.verify(token, process.env.SECRET_KEY, { algorithms: ['HS256'] });
       console.log('Token decoded:', decoded);
-
-      // Proceed with payment processing
       const referenceId = uuidv4();
 
-      // Ensure currency code is supported
-      const supportedCurrency = currency.toUpperCase(); // Convert currency to uppercase
-      const supportedCurrencies = ['USD', 'EUR', 'RWF']; // Example list of supported currencies
+
+      const supportedCurrency = currency.toUpperCase(); 
+      const supportedCurrencies = ['USD', 'EUR', 'RWF'];
 
       if (!supportedCurrencies.includes(supportedCurrency)) {
         return res.status(400).json({ error: 'Currency not supported.' });
@@ -48,7 +45,7 @@ class PaymentController {
         externalId: `momo_${Date.now()}`,
         payer: {
           partyIdType: 'MSISDN',
-          partyId: phoneNumber.toString(), // Ensure phoneNumber is a string
+          partyId: phoneNumber.toString(),
         },
         payeeNote: description || 'Payment for items',
         payerMessage: description || 'Payment for items',
